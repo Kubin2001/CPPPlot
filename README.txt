@@ -1,0 +1,1 @@
+C++ SDL2 Plot creation library prototype
