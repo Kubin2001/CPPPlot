@@ -27,7 +27,7 @@ class Program {
 
         void StartProgram();
 
-        void CreateFunction(double start, double stop, int winX, int winY, std::vector<double> &vector);
+        void CreateFunction(double start, double stop, std::vector<double> &vector, char color);
 
         void LoadTextures();
 
@@ -38,6 +38,10 @@ class Program {
         void Movement();
 
         void Render();
+
+        void Start(int winX, int winY);
+
+        void Show();
 
         SDL_Texture* load(const char* file, SDL_Renderer* ren);
 

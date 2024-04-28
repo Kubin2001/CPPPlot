@@ -42,8 +42,22 @@ void Function::CalcMaxMin(double &max, double &min, std::vector<double>& fun) {
     min = yMin;
 }
 
-void Function::CreateFunction(std::vector<double>& fun) {
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+void Function::CreateFunction(std::vector<double>& fun, const char color) {
+    switch (color)
+    {
+        case 'r':
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            break;
+        case 'g':
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            break;
+        case 'b':
+            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+            break;
+        default:
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            break;
+    }
     SDL_Rect rect2;
     double scaleX = static_cast<double>(fun.size()) / static_cast<double>(windowX - 100);
     //std::cout << scaleX << "ScaleX\n";

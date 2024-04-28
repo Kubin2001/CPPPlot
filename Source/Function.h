@@ -26,7 +26,7 @@ class Function
         void SetTexture(SDL_Texture* temptex);
         SDL_Rect* GetRectangle();
 
-        void CreateFunction(std::vector<double>& fun);
+        void CreateFunction(std::vector<double>& fun, const char color);
 
         void CalcMaxMin(double& max, double& min, std::vector<double>& fun);
 

@@ -65,6 +65,7 @@ int main(int argv, char* argc[]){
     Program program;
 
     std::vector<double> signal;
+    std::vector<double> signal2;
 
 
     double uFun = 0;
@@ -74,14 +75,14 @@ int main(int argv, char* argc[]){
     for (double i = start; i < stop; i += 0.01)
     {
         //////////////////////////////////AMPLITUDA
-        //mt = sin(2 * pi * 100 * i);
-        //signal.push_back(
-        //    (0.1 * mt + 1) * cos(2*pi*200 * pi)
-        //);
-        //mt = sin(2 * pi * 200 * i);
-        //signal.push_back(
-        //    (0.5 * mt +1) * cos(2*pi*1000 * pi)
-        //);
+        mt = sin(2 * pi * 100 * i);
+        signal.push_back(
+            ((0.1 * mt + 1) * cos(2*pi*200 * pi))
+        );
+        mt = sin(2 * pi * 200 * i);
+        signal2.push_back(
+            (0.5 * mt +1) * cos(2*pi*1000 * pi)
+        );
         //mt = sin(2 * pi * 200 * i);
         //signal.push_back(
         //    (0.5 * mt +1) * cos(2*pi*1000 * pi)
@@ -94,10 +95,10 @@ int main(int argv, char* argc[]){
         //); // Modyfikacja fazy
         // 
         //////////////////////////////////CZÊSTOTLIWOŒÆ
-        mt = sin(2 * pi * 4000 * i);
-        signal.push_back(
-           cos(2*pi*150 * i * (0.5/1000) * mt)
-        ); // Modyfikacja czêstotliwoœci
+        //mt = sin(2 * pi * 4000 * i);
+        //signal.push_back(
+        //   cos(2*pi*150 * i * (0.5/1000) * mt)
+        //); // Modyfikacja czêstotliwoœci
     }
 
     double fs = (15 * stop) / 2;
@@ -110,7 +111,11 @@ int main(int argv, char* argc[]){
     std::vector<double> decibel = toDecibel(signal);
     
 
-    program.CreateFunction(start, fs, 1400, 900, signal);
+    program.Start(1400,900);
+    program.CreateFunction(start, fs, signal,'r');
+    program.CreateFunction(start, fs, signal2,'b');
+
+    program.Show();
 
     return 0;
 }

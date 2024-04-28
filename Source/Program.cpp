@@ -18,20 +18,27 @@ Program::Program() {
     function = nullptr;
 }
 
-void Program::CreateFunction(double start, double stop, int winX, int winY, std::vector<double> &vector) {
+void Program::CreateFunction(double start, double stop, std::vector<double>& vector, const char color) {
+    fun = vector;
+    this->start = start;
+    this->stop = stop;
+    Events();
+    function->CreateFunction(fun,color);
+
+}
+void Program::Start(int winX, int winY) {
     if (winX > 300 && winX < 4000) {
         windowX = winX;
     }
     if (winY > 300 && winY < 4000) {
         windowY = winY;
     }
-    fun = vector;
-    this->start = start;
-    this->stop = stop;
     StartProgram();
-    Events();
-    Render();
+    SDL_RenderClear(renderer);
+}
 
+void Program::Show() {
+    Render();
     while (!end)
     {
         Movement();
@@ -50,6 +57,8 @@ void Program::StartProgram() {
     function = new Function(font, renderer, windowX, windowY);
     LoadTextures();
 }
+
+
 
 void Program::LoadTextures() {
     diagram->SetTextureDiagram(load("Textures/point.png", renderer));
@@ -75,8 +84,6 @@ void Program::Movement() {
 }
 
 void Program::Render() {
-    SDL_RenderClear(renderer);
-    function->CreateFunction(fun);
     diagram->Render();
     diagram->CreateYScale(function->GetMax(),function->GetMin());
     diagram->CreateXScale(start,stop);
