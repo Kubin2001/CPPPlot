@@ -90,6 +90,44 @@ void Function::CreateFunction(std::vector<double>& fun, const char color) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 }
 
+
+void Function::CreatePoints(std::vector<double>& fun, const char color, const int size) {
+    switch (color)
+    {
+    case 'r':
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        break;
+    case 'g':
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        break;
+    case 'b':
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        break;
+    default:
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        break;
+    }
+    SDL_Rect rect2;
+    double scaleX = static_cast<double>(fun.size()) / static_cast<double>(windowX - 100);
+    int margin = windowY * 0.1;
+    int usableWindowHeight = windowY - 150 - 2 * margin;
+
+    float yRange = yMax - yMin;
+    float scaleY = usableWindowHeight / yRange / 1.7;
+
+    int funStart = 100;
+
+    for (int i = funStart; i < windowX; i++)
+    {
+        GetRectangle()->x = i;
+        GetRectangle()->y = ((fun[static_cast<int>((i - funStart) * scaleX)] * -1) * scaleY) + windowY / 2;
+        GetRectangle()->w = size;
+        GetRectangle()->h = size;
+        SDL_RenderFillRect(renderer,&rectangle);
+    }
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+}
+
 double Function::GetMax() {
     return yMax;
 }

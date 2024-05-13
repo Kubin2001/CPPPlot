@@ -26,6 +26,15 @@ void Program::CreateFunction(double start, double stop, std::vector<double>& vec
     function->CreateFunction(fun,color);
 
 }
+void Program::CreatePoints(double start, double stop, std::vector<double>& vector, const char color, const int size) {
+    fun = vector;
+    this->start = start;
+    this->stop = stop;
+    Events();
+    function->CreatePoints(fun, color,size);
+
+}
+
 void Program::Start(int winX, int winY) {
     if (winX > 300 && winX < 4000) {
         windowX = winX;

@@ -1,8 +1,9 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include "Program.h"
 #include <vector>
 #include <cmath>
 #include <complex>
+#include <ctime>
 
 /*std::vector<std::complex<double>> DFT(const std::vector<std::complex<double>>& signal) {
     std::vector<std::complex<double>> spectrum(signal.size());
@@ -42,78 +43,117 @@ std::vector<double> calculateAmplitudeSpectrum(const std::vector<std::complex<do
     return decibel;
 }*/
 
-std::vector<double> toDecibel(const std::vector<double>& amplitude) {
+/*std::vector<double> toDecibel(const std::vector<double>& amplitude) {
     std::vector<double> decibel(amplitude.size());
     for (size_t i = 0; i < amplitude.size(); ++i) {
         decibel[i] = amplitude[i] * std::pow(10.0f,10 * 0.05f);
         //std::cout << decibel[i] << "\n";
     }
     return decibel;
+}*/
+
+/*std::vector<double> toDecibel(const std::vector<double>& amplitude) {
+    std::vector<double> decibel(amplitude.size());
+    for (size_t i = 0; i < amplitude.size(); ++i) {
+        if (amplitude[i] <= 0) {
+            throw std::domain_error("Amplitude must be positive for logarithmic conversion.");
+        }
+        decibel[i] = 20 * std::log10(amplitude[i]);
+    }
+    return decibel;
+}*/
+
+
+std::vector<double> toDecibel(const std::vector<double>& signal) {
+    std::vector<double> decibel(signal.size());
+    for (size_t i = 0; i < signal.size(); ++i) {
+        double power = signal[i] * signal[i];
+        if (power == 0) {
+            decibel[i] = -std::numeric_limits<double>::infinity();
+        }
+        else {
+            decibel[i] = 10 * std::log10(power);
+        }
+    }
+    return decibel;
 }
 
-int main(int argv, char* argc[]){
+int main(int argv, char* argc[]) {
 
-    // Faza pocz¹tkowa dla g³ównej funkcji cosinus (phi) to start pêtli
-    // Czas trwania to ró¿nica pomiêdzy startem a warunkiem przerwania pêtli
-    // Czêstotliwoœæ próbkowania oznacza ile razy i musi zostaæ zwiêkszone aby z np 2 zmieni³o siê na 3
-    // Iloœæ próbek to czas trwania razy czêstotliwoœæ
+    // Faza poczÂ¹tkowa dla gÂ³Ã³wnej funkcji cosinus (phi) to start pÃªtli
+    // Czas trwania to rÃ³Â¿nica pomiÃªdzy startem a warunkiem przerwania pÃªtli
+    // CzÃªstotliwoÅ“Ã¦ prÃ³bkowania oznacza ile razy i musi zostaÃ¦ zwiÃªkszone aby z np 2 zmieniÂ³o siÃª na 3
+    // IloÅ“Ã¦ prÃ³bek to czas trwania razy czÃªstotliwoÅ“Ã¦
 
     const double pi = 3.14;
     double start = 0;
-    double stop = 100;
+    double stop = 3;
 
     Program program;
 
     std::vector<double> signal;
     std::vector<double> signal2;
-
-
-    double uFun = 0;
+    std::vector<int> bitStream;
 
     double mt = 0;
 
-    for (double i = start; i < stop; i += 0.01)
+    double kA = 30;
+    double kP = 7.5;
+    double KF = 7.4;
+
+    double fn = 1000;
+    double fm = fn * 2.5;
+
+
+    int A1 = 2; // Losowa Liczba
+    int A2 = 10;// Losowa Liczba rÃ³Å¼na od A1
+
+    int random = 0;
+
+
+    for (double i = start; i < stop; i += 1 / fn) {
+        random = rand() % 2;
+        bitStream.push_back(random);
+    }
+    int counter = 0;
+
+    for (double i = start; i < stop; i += 1 / fn)
     {
+        mt = sin(2 * pi * fn * i);
+        switch (bitStream[counter])
+        {
+            case 0:
+                signal.push_back(
+                    A1 * mt
+                );
+                break;
+            case 1:
+                signal.push_back(
+                    A2 * mt
+                );
+                break;
+        }
+        counter++;
         //////////////////////////////////AMPLITUDA
-        mt = sin(2 * pi * 100 * i);
         signal.push_back(
-            ((0.1 * mt + 1) * cos(2*pi*200 * pi))
+            ((kA * mt + 1)) //cos(2 * pi * fm * i))
         );
-        mt = sin(2 * pi * 200 * i);
+
         signal2.push_back(
-            (0.5 * mt +1) * cos(2*pi*1000 * pi)
+            (kA * mt +1) * cos(2*pi*fn * i)
         );
-        //mt = sin(2 * pi * 200 * i);
-        //signal.push_back(
-        //    (0.5 * mt +1) * cos(2*pi*1000 * pi)
-        //);
-        //////////////////////////////////K¥TOWA
-        // 
-        //mt = sin(2 * pi * 200 * i);
-        //signal.push_back(
-        //   cos(2*pi*100 * i * 0.5 * mt)
-        //); // Modyfikacja fazy
-        // 
-        //////////////////////////////////CZÊSTOTLIWOŒÆ
-        //mt = sin(2 * pi * 4000 * i);
-        //signal.push_back(
-        //   cos(2*pi*150 * i * (0.5/1000) * mt)
-        //); // Modyfikacja czêstotliwoœci
+
+
     }
 
-    double fs = (15 * stop) / 2;
+    std::vector<double> decibel = toDecibel(signal2);
 
-    //std::vector<std::complex<double>> spectrum = DFT(signal);
-    //std::vector<double> amplitude = calculateAmplitudeSpectrum(spectrum);
 
-    //std::vector<double> decibel = toDecibel(signal);
-
-    std::vector<double> decibel = toDecibel(signal);
-    
-
-    program.Start(1400,900);
-    program.CreateFunction(start, fs, signal,'r');
-    program.CreateFunction(start, fs, signal2,'b');
+    program.Start(1400, 900);
+    program.CreateFunction(start, fm, signal,'r');
+    //program.CreateFunction(start, fm, signal2, 'b');
+    //program.CreatePoints(start, fm, signal, 'b',5);
+    //program.CreatePoints(start, fm, signal2, 'g', 5);
 
     program.Show();
 

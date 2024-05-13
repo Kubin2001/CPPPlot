@@ -29,6 +29,8 @@ class Program {
 
         void CreateFunction(double start, double stop, std::vector<double> &vector, char color);
 
+        void CreatePoints(double start, double stop, std::vector<double>& vector, const char color,const int size);
+
         void LoadTextures();
 
         void Events();

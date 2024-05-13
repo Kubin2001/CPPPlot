@@ -28,6 +28,8 @@ class Function
 
         void CreateFunction(std::vector<double>& fun, const char color);
 
+        void CreatePoints(std::vector<double>& fun, const char color, const int size);
+
         void CalcMaxMin(double& max, double& min, std::vector<double>& fun);
 
         double GetMax();
