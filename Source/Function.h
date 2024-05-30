@@ -14,10 +14,12 @@ class Function
         SDL_Texture * texture = nullptr;
         SDL_Rect rectangle;
         Font* font;
-        int windowX = 1000;
-        int windowY = 1000;
+        int windowX = 0;
+        int windowY = 0;
         double yMax = 0;
         double yMin = 0;
+        double plotMax = 0;
+        double plotMin = 0;
 
     public:
         Function(Font* font, SDL_Renderer* renderer, int windowX, int windowY);
@@ -30,10 +32,14 @@ class Function
 
         void CreatePoints(std::vector<double>& fun, const char color, const int size);
 
-        void CalcMaxMin(double& max, double& min, std::vector<double>& fun);
+        void CalcMaxMin(double& max, double& min, double& plotMax, double& plotMin, std::vector<double>& fun);
 
         double GetMax();
 
         double GetMin();
+
+        double GetPlotMax();
+
+        double GetPlotMin();
 
 };

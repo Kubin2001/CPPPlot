@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <SDL.h>
+#include <vector>
 #include "SDL_image.h"
 #include "Font.h"
 
@@ -10,12 +11,12 @@ class Diagram
     private:
         SDL_Renderer* renderer;
         SDL_Texture* textureDiagram = nullptr;
-        SDL_Rect rectangleDiagram[4];
+        std::vector <SDL_Rect> rectangleDiagram;
         SDL_Rect rectangleFunction;
         Font* font = nullptr;
         
-        int windowX = 1000;
-        int windowY = 1000;
+        int windowX = 0;
+        int windowY = 0;
 
     public:
         Diagram(Font* font, SDL_Renderer* renderer, int windowX, int windowY);
@@ -25,9 +26,9 @@ class Diagram
         SDL_Rect* GetRectangleFunction();
         void Render();
 
-        void CreateYScale(double yMax, double yMin);
+        void CreateYScale(double yMax, double yMin, double plotMin, double plotMax);
 
-        void CreateXScale(double start, double stop);
+        void CreateXScale(double yMax, double yMin, double plotMin, double plotMax);
 
         void SetUp();
 

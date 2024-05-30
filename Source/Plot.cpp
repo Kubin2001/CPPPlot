@@ -3,14 +3,11 @@
 #include "SDL_image.h"
 #include <complex>
 
-#include "Program.h"
+#include "Plot.h"
 #include "Diagram.h"
 #include "Font.h"
 
-extern int windowX;
-extern int windowY;
-
-Program::Program() {
+Plot::Plot() {
     window = nullptr;
     renderer = nullptr;
     diagram = nullptr;
@@ -18,7 +15,13 @@ Program::Program() {
     function = nullptr;
 }
 
-void Program::CreateFunction(double start, double stop, std::vector<double>& vector, const char color) {
+void Plot::Tittle(std::string tittle) {
+    int fontSize = 20;
+    int xPos = (windowX *0.5) - ((tittle.length() * fontSize) *0.5);
+    font->RenderText(renderer, tittle, xPos, 10, fontSize, fontSize, fontSize);
+}
+
+void Plot::CreateFunction(double start, double stop, std::vector<double>& vector, const char color) {
     fun = vector;
     this->start = start;
     this->stop = stop;
@@ -26,7 +29,7 @@ void Program::CreateFunction(double start, double stop, std::vector<double>& vec
     function->CreateFunction(fun,color);
 
 }
-void Program::CreatePoints(double start, double stop, std::vector<double>& vector, const char color, const int size) {
+void Plot::CreatePoints(double start, double stop, std::vector<double>& vector, const char color, const int size) {
     fun = vector;
     this->start = start;
     this->stop = stop;
@@ -35,7 +38,7 @@ void Program::CreatePoints(double start, double stop, std::vector<double>& vecto
 
 }
 
-void Program::Start(int winX, int winY) {
+void Plot::Start(int winX, int winY) {
     if (winX > 300 && winX < 4000) {
         windowX = winX;
     }
@@ -46,7 +49,7 @@ void Program::Start(int winX, int winY) {
     SDL_RenderClear(renderer);
 }
 
-void Program::Show() {
+void Plot::Show() {
     Render();
     while (!end)
     {
@@ -54,14 +57,14 @@ void Program::Show() {
     }
 }
 
-void Program::StartProgram() {
+void Plot::StartProgram() {
     SDL_Init(SDL_INIT_EVERYTHING);
     window = SDL_CreateWindow("Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowX, windowY, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, 0);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     font = new Font;
-    font->LoadText(40, 29, 29);
+    font->LoadText(29, 29);
     diagram = new Diagram(font, renderer, windowX, windowY);
     function = new Function(font, renderer, windowX, windowY);
     LoadTextures();
@@ -69,44 +72,44 @@ void Program::StartProgram() {
 
 
 
-void Program::LoadTextures() {
+void Plot::LoadTextures() {
     diagram->SetTextureDiagram(load("Textures/point.png", renderer));
     function->SetTexture(load("Textures/fun_point.png", renderer));
     font->SetTexture(load("Textures/font.png", renderer));
 }
 
-void Program::Events() {
+void Plot::Events() {
     diagram->SetUp();
-    function->CalcMaxMin(max, min, fun);
+    function->CalcMaxMin(max, min, plotMax, plotMin, fun);
 }
 
-void Program::Exit(const Uint8* state) {
+void Plot::Exit(const Uint8* state) {
     if (state[SDL_SCANCODE_ESCAPE]) {
         end = true;
     }
 }
 
-void Program::Movement() {
+void Plot::Movement() {
     SDL_PumpEvents();
     const Uint8* state = SDL_GetKeyboardState(NULL);
     Exit(state);
 }
 
-void Program::Render() {
+void Plot::Render() {
     diagram->Render();
-    diagram->CreateYScale(function->GetMax(),function->GetMin());
-    diagram->CreateXScale(start,stop);
+    diagram->CreateYScale(function->GetMax(),function->GetMin(),plotMin,plotMax);
+    diagram->CreateXScale(start,stop,100,windowX -200);
     SDL_RenderPresent(renderer);
 }
 
-SDL_Texture* Program::load(const char* file, SDL_Renderer* ren) {
+SDL_Texture* Plot::load(const char* file, SDL_Renderer* ren) {
     SDL_Surface* tmpSurface = IMG_Load(file);
     SDL_Texture* tex = SDL_CreateTextureFromSurface(ren, tmpSurface);
     SDL_FreeSurface(tmpSurface);
     return tex;
 }
 
-Program::~Program() {
+Plot::~Plot() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

@@ -26,7 +26,7 @@ SDL_Rect* Function::GetRectangle() {
     return &rectangle;
 }
 
-void Function::CalcMaxMin(double &max, double &min, std::vector<double>& fun) {
+void Function::CalcMaxMin(double &max, double &min ,double &plotMax, double &plotMin, std::vector<double>& fun) {
     for (int i = 0; i < fun.size(); i++)
     {
         if (fun[i] > yMax) {
@@ -40,6 +40,30 @@ void Function::CalcMaxMin(double &max, double &min, std::vector<double>& fun) {
     }
     max = yMax;
     min = yMin;
+
+    double scaleX = static_cast<double>(fun.size()) / static_cast<double>(windowX - 200);
+    int margin = windowY * 0.1;
+    int usableWindowHeight = windowY - 150 - 2 * margin;
+
+    float yRange = yMax - yMin;
+    float scaleY = usableWindowHeight / yRange / 1.7;
+
+    int funStart = 100;
+    int funEnd = windowX - 100;
+
+    int localPlotMax = ((fun[0] * -1) * scaleY) + windowY / 2;
+    int localPlotMin = ((fun[0] * -1) * scaleY) + windowY / 2;
+    int temp = 0;
+    for (int i = funStart; i < funEnd; i++)
+    {
+        temp = ((fun[static_cast<int>((i - funStart) * scaleX)] * -1) * scaleY) + windowY / 2;
+        if (localPlotMax < temp) { localPlotMax = temp; }
+        if (localPlotMin > temp) { localPlotMin = temp; }
+    }
+    std::cout <<"Loacal Plot Max" << localPlotMax << "\n";
+    std::cout <<"Local Plot Min: " << localPlotMin << "\n";
+    plotMax = localPlotMax;
+    plotMin = localPlotMin;
 }
 
 void Function::CreateFunction(std::vector<double>& fun, const char color) {
@@ -59,7 +83,7 @@ void Function::CreateFunction(std::vector<double>& fun, const char color) {
             break;
     }
     SDL_Rect rect2;
-    double scaleX = static_cast<double>(fun.size()) / static_cast<double>(windowX - 100);
+    double scaleX = static_cast<double>(fun.size()) / static_cast<double>(windowX - 200);
     //std::cout << scaleX << "ScaleX\n";
     //std::cout << fun.size() << "ScaleX\n";
     //std::cout << windowX << "ScaleX\n";
@@ -71,8 +95,9 @@ void Function::CreateFunction(std::vector<double>& fun, const char color) {
     float scaleY = usableWindowHeight / yRange / 1.7;
 
     int funStart = 100;
+    int funEnd = windowX - 100;
 
-    for (int i = funStart; i < windowX; i++)
+    for (int i = funStart; i < funEnd; i++)
     {
         GetRectangle()->x = i;
         GetRectangle()->y = ((fun[static_cast<int>((i - funStart) * scaleX)] * -1) * scaleY) + windowY / 2;
@@ -108,7 +133,7 @@ void Function::CreatePoints(std::vector<double>& fun, const char color, const in
         break;
     }
     SDL_Rect rect2;
-    double scaleX = static_cast<double>(fun.size()) / static_cast<double>(windowX - 100);
+    double scaleX = static_cast<double>(fun.size()) / static_cast<double>(windowX - 200);
     int margin = windowY * 0.1;
     int usableWindowHeight = windowY - 150 - 2 * margin;
 
@@ -116,8 +141,9 @@ void Function::CreatePoints(std::vector<double>& fun, const char color, const in
     float scaleY = usableWindowHeight / yRange / 1.7;
 
     int funStart = 100;
+    int funEnd = windowX - 100;
 
-    for (int i = funStart; i < windowX; i++)
+    for (int i = funStart; i < funEnd; i++)
     {
         GetRectangle()->x = i;
         GetRectangle()->y = ((fun[static_cast<int>((i - funStart) * scaleX)] * -1) * scaleY) + windowY / 2;
@@ -134,6 +160,15 @@ double Function::GetMax() {
 
 double Function::GetMin() {
     return yMin;
+}
+
+
+double Function::GetPlotMax() {
+    return plotMax;
+}
+
+double Function::GetPlotMin() {
+    return plotMax;
 }
 
 
